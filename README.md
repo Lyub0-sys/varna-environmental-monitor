@@ -1,15 +1,32 @@
 # Varna Environmental Monitor
 
-A bilingual Flask web application for displaying environmental data from Varna, Bulgaria.
+A bilingual Flask web application that retrieves, validates and visualizes environmental data for Varna, Bulgaria.
 
-Двуезично Flask уеб приложение за показване на данни за околната среда във Варна, България.
+The application integrates:
 
-## Current version / Текуща версия
+- live air-quality measurements from the OpenAQ API;
+- gamma dose-rate data published by the Bulgarian Nuclear Regulatory Agency;
+- pollutant-specific reference visualizations;
+- bilingual Bulgarian/English presentation;
+- validation and filtering of invalid measurements.
 
-The application reads air-quality measurements from a local OpenAQ CSV dataset and displays the latest valid measurement for each pollutant.
+## Main technologies
 
-Приложението прочита измервания за качеството на въздуха от локален OpenAQ CSV файл и показва последното валидно измерване за всеки замърсител.
+- Python 3.11
+- Flask
+- Requests
+- BeautifulSoup
+- OpenAQ API
+- Jinja templates
+- HTML and CSS
+- Jupyter Notebook
+- Git and GitHub
 
+## Scientific limitation
+
+The application displays the latest available air-quality measurements. These instantaneous values are compared indicatively with health reference values whose official averaging periods may be 8 or 24 hours.
+
+The visualization therefore does not represent an official air-quality index or a confirmed legal exceedance.
 ## Displayed pollutants / Показвани замърсители
 
 - Carbon monoxide / Въглероден оксид — CO

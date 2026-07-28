@@ -56,6 +56,11 @@ The visualization therefore does not represent an official air-quality index or 
 varna_environment_monitor/
 ├── data/
 │   └── openaq_varna_8843.csv
+├── docs/
+│   └── screenshots/
+│       ├── air-quality-reference-chart.jpg
+│       ├── dashboard-overview.jpg
+│       └── measurement-cards.jpg
 ├── static/
 │   └── style.css
 ├── templates/
@@ -64,5 +69,23 @@ varna_environment_monitor/
 ├── air_quality.py
 ├── app.py
 ├── ExploreOpenAQ.ipynb
+├── ExploreRadiation.ipynb
+├── radiation.py
 ├── README.md
+├── requirements.txt
 └── .gitignore
+```
+
+## Screenshots / Екранни снимки
+
+### Dashboard overview / Общ изглед
+
+![Varna Environmental Monitor dashboard](docs/screenshots/dashboard-overview.jpg)
+
+### Air-quality reference chart / Графика на качеството на въздуха
+
+![Air-quality measurements against WHO reference values](docs/screenshots/air-quality-reference-chart.jpg)
+
+### Measurement cards / Карти с измерванията
+
+![Latest environmental measurement cards](docs/screenshots/measurement-cards.jpg)

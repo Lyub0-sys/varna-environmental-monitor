@@ -36,3 +36,89 @@ li {
 .data-info p {
     margin: 5px 0;
 }
+/* Карта, съдържаща графиката. */
+.chart-card {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+
+/* Заглавие на графиката. */
+.chart-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 21px;
+}
+
+
+/* Обяснителният текст под заглавието. */
+.chart-note {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #555555;
+    line-height: 1.4;
+}
+
+
+/* Контейнерът на всички хоризонтални ленти. */
+.bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+
+/* Един ред от графиката:
+   име, лента и числова стойност. */
+.bar-row {
+    display: grid;
+    grid-template-columns: 65px minmax(0, 1fr) 145px;
+    gap: 12px;
+    align-items: center;
+}
+
+
+/* Краткото име на замърсителя. */
+.bar-label {
+    font-weight: bold;
+}
+
+
+/* Светлият фон зад цветната лента. */
+.bar-track {
+    height: 22px;
+    overflow: hidden;
+    background-color: #e2e8f0;
+    border-radius: 999px;
+}
+
+
+/* Цветната част на всяка лента. */
+.bar-fill {
+    height: 100%;
+    min-width: 2px;
+    background-color: #2563eb;
+    border-radius: 999px;
+}
+
+
+/* Числото и мерната единица вдясно. */
+.bar-value {
+    text-align: right;
+    white-space: nowrap;
+}
+
+
+/* Подреждане за телефон или тесен прозорец. */
+@media (max-width: 700px) {
+    .bar-row {
+        grid-template-columns: 55px minmax(0, 1fr);
+    }
+
+    .bar-value {
+        grid-column: 2;
+        text-align: left;
+    }
+}

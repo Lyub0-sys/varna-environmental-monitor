@@ -25,8 +25,111 @@
             {{ latest_update }}
         </p>
     </div>
+    <div class="data-info">
+    <p>
+        <strong>Гама-фон / Gamma dose rate:</strong>
+
+        {% if radiation and radiation["available"] %}
+            {{ "%.2f" | format(radiation["value"]) }}
+            {{ radiation["unit"] }}
+        {% else %}
+            Данните временно не са налични /
+            Data temporarily unavailable
+        {% endif %}
+    </p>
+
+    {% if radiation and radiation["available"] %}
+        <p>
+            <strong>Актуални към / Updated:</strong>
+            {{ radiation["updated_at"] }}
+        </p>
+
+        <p>
+            <strong>Източник / Source:</strong>
+
+            <a
+                href="{{ radiation['source_url'] }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {{ radiation["source_name"] }}
+            </a>
+        </p>
+    {% endif %}
+</div>
 
     <ul>
+        <section class="chart-card">
+    <h2 class="chart-title">
+        Текущи концентрации /
+        Current pollutant concentrations
+    </h2>
+
+    <p class="chart-note">
+        Лентите сравняват текущите числови стойности.
+        Те не представляват индекс за качество на въздуха /
+        The bars compare current numerical values.
+        They do not represent an air-quality index.
+    </p>
+
+    {% if chart_measurements %}
+
+        <div class="bar-chart">
+
+            {% for item in chart_measurements
+                | sort(attribute="parameter") %}
+
+                <div class="bar-row">
+
+                    <div
+                        class="bar-label"
+                        title="{{ item['label'] }}"
+                    >
+                        {% if item["parameter"] == "pm25" %}
+    PM2.5
+{% else %}
+    {{ item["parameter"] | upper }}
+{% endif %}
+                    </div>
+
+                    <div
+                        class="bar-track"
+                        role="img"
+                        aria-label="
+                            {{ item['parameter'] | upper }}:
+                            {{ item['value'] }}
+                            {{ item['unit'] }}
+                        "
+                    >
+                        <div
+                            class="bar-fill"
+                            style="
+                                width:
+                                {{ item['width_percent'] | round(1) }}%;
+                            "
+                        ></div>
+                    </div>
+
+                    <div class="bar-value">
+                        {{ item["value"] }}
+                        {{ item["unit"] }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>
+            Няма данни за графиката /
+            No chart data is available.
+        </p>
+
+    {% endif %}
+</section>
         {% for parameter, measurement in measurements.items() %}
             <li>
                 <strong>{{ pollutant_names[parameter] }}</strong>:

@@ -22,7 +22,9 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     # Вземаме последното валидно измерване за всеки параметър.
-    latest_measurements = air_quality.get_latest_measurements_by_parameter()
+    latest_measurements = (
+    air_quality.get_current_measurements()
+)
 
     # Подготвяме обща информация за станцията и датата на данните.
     station_name = ""

@@ -64,6 +64,5 @@ varna_environment_monitor/
 ├── air_quality.py
 ├── app.py
 ├── ExploreOpenAQ.ipynb
-├── project_roadmap.py
 ├── README.md
 └── .gitignore

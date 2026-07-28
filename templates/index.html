@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Varna Environmental Monitor
+{% endblock %}
+
+
+{% block content %}
+    <h1>Varna Environmental Monitor</h1>
+
+    <p>
+        Последни валидни измервания на въздуха /
+        Latest valid air-quality measurements:
+    </p>
+
+    <div class="data-info">
+        <p>
+            <strong>Станция / Station:</strong>
+            {{ station_name }}
+        </p>
+
+        <p>
+            <strong>Данни към / Data as of:</strong>
+            {{ latest_update }}
+        </p>
+    </div>
+
+    <ul>
+        {% for parameter, measurement in measurements.items() %}
+            <li>
+                <strong>{{ pollutant_names[parameter] }}</strong>:
+                {{ measurement["value"] }}
+                {{ measurement["unit"] }}
+                —
+                {{ measurement["datetime_local"] }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

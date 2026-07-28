@@ -1,0 +1,38 @@
+/* Настройки за цялата страница. */
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f4f7f8;
+}
+
+/* Основното заглавие на страницата. */
+h1 {
+    text-align: center;
+}
+
+/* Премахваме стандартните точки от списъка. */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Всеки параметър се показва в отделна бяла кутия. */
+li {
+    background-color: white;
+    margin-bottom: 12px;
+    padding: 15px;
+    border-radius: 8px;
+}
+/* Обща информация за станцията и датата на данните. */
+.data-info {
+    background-color: white;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.data-info p {
+    margin: 5px 0;
+}

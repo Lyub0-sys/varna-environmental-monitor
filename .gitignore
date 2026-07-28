@@ -1,0 +1,16 @@
+# Виртуалната среда не се качва в GitHub.
+.venv/
+
+# Автоматично създадени Python файлове.
+__pycache__/
+*.pyc
+
+# Временни файлове на Jupyter Notebook.
+.ipynb_checkpoints/
+
+# Бъдещи тайни настройки и API ключове.
+.env
+
+# Системни файлове.
+.DS_Store
+Thumbs.db

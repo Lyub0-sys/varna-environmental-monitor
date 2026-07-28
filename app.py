@@ -14,6 +14,32 @@ POLLUTANT_NAMES = {
     "pm25": "Фини прахови частици / Fine particulate matter (PM2.5)",
     "so2": "Серен диоксид / Sulfur dioxide (SO₂)",
 }
+POLLUTANT_REFERENCES = {
+    "co": {
+        "value": 4000.0,
+        "period": "24 h",
+    },
+    "no2": {
+        "value": 25.0,
+        "period": "24 h",
+    },
+    "o3": {
+        "value": 100.0,
+        "period": "8 h",
+    },
+    "pm10": {
+        "value": 45.0,
+        "period": "24 h",
+    },
+    "pm25": {
+        "value": 15.0,
+        "period": "24 h",
+    },
+    "so2": {
+        "value": 40.0,
+        "period": "24 h",
+    },
+}
 
 # Създаваме Flask приложението.
 app = Flask(__name__)
@@ -28,30 +54,39 @@ def index():
 )
     radiation_data = radiation.get_current_radiation()
 
-    # Подготвяме данни за проста графика
-    # на текущите стойности на замърсителите.
+   # Подготвяме всеки замърсител спрямо
+    # неговата собствена WHO референтна стойност.
     chart_measurements = []
 
-    # Намираме най-голямата стойност,
-    # за да изчислим ширината на всяка лента.
-    max_value = 0
-
-    for measurement in latest_measurements.values():
-        value = measurement["value"]
-
-        if value > max_value:
-            max_value = value
-
-    # Ако по някаква причина всички стойности са 0,
-    # пазим се от деление на нула.
-    if max_value == 0:
-        max_value = 1
-
-    # Създаваме списък с данни за графиката.
     for parameter, measurement in latest_measurements.items():
-        width_percent = (
-            measurement["value"] / max_value
+        reference = POLLUTANT_REFERENCES.get(parameter)
+
+        # Пропускаме параметъра, ако няма зададена
+        # референтна стойност.
+        if reference is None:
+            continue
+
+        value = measurement["value"]
+        reference_value = reference["value"]
+
+        # Изчисляваме колко процента от
+        # референтната стойност представлява измерването.
+        reference_percent = (
+            value / reference_value
         ) * 100
+
+        # Лентата не може да бъде по-дълга от 100%.
+        # Реалният процент обаче остава видим като текст.
+        progress_value = min(reference_percent, 100)
+
+        # Цветовете показват близостта до референцията.
+        # Това не е официална AQI класификация.
+        if reference_percent > 75:
+            status = "warning"
+
+    
+        else:
+            status = "normal"
 
         chart_measurements.append(
             {
@@ -60,11 +95,19 @@ def index():
                     parameter,
                     parameter.upper(),
                 ),
-                "value": measurement["value"],
+                "value": value,
                 "unit": measurement["unit"],
-                "width_percent": width_percent,
+                "reference_value": reference_value,
+                "reference_period": reference["period"],
+                "reference_percent": reference_percent,
+                "progress_value": progress_value,
+                "status": status,
             }
         )
+
+    # Подготвяме обща информация за станцията и датата на данните.
+    station_name = ""
+    latest_update = ""
 
     # Подготвяме обща информация за станцията и датата на данните.
     station_name = ""

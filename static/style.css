@@ -95,10 +95,27 @@ li {
 }
 
 
-/* Цветната част на всяка лента. */
-.bar-fill {
-    height: 100%;
-    min-width: 2px;
+/* Графична лента чрез HTML progress element. */
+.bar-progress {
+    display: block;
+    width: 100%;
+    height: 22px;
+    border: 0;
+    appearance: none;
+    background-color: transparent;
+}
+
+.bar-progress::-webkit-progress-bar {
+    background-color: #e2e8f0;
+    border-radius: 999px;
+}
+
+.bar-progress::-webkit-progress-value {
+    background-color: #2563eb;
+    border-radius: 999px;
+}
+
+.bar-progress::-moz-progress-bar {
     background-color: #2563eb;
     border-radius: 999px;
 }
@@ -120,5 +137,230 @@ li {
     .bar-value {
         grid-column: 2;
         text-align: left;
+    }
+}
+/* Допълнително разстояние в картата за гама-фона. */
+.radiation-chart-card {
+    margin-bottom: 20px;
+}
+
+
+/* Редът с текущата стойност. */
+.radiation-current-value {
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+
+
+/* Основната лента за радиационния фон. */
+.radiation-progress {
+    display: block;
+    width: 100%;
+    height: 24px;
+    border: 0;
+    appearance: none;
+    background-color: transparent;
+}
+
+
+/* Фонът на лентата в Chrome и Edge. */
+.radiation-progress::-webkit-progress-bar {
+    background-color: #e2e8f0;
+    border-radius: 999px;
+}
+
+
+/* Зелено запълване при стойност до 0.40 µSv/h. */
+.radiation-progress-normal::-webkit-progress-value {
+    background-color: #16a34a;
+    border-radius: 999px;
+}
+
+
+/* Червено запълване при стойност над 0.40 µSv/h. */
+.radiation-progress-alert::-webkit-progress-value {
+    background-color: #dc2626;
+    border-radius: 999px;
+}
+
+
+/* Зелено запълване за Firefox. */
+.radiation-progress-normal::-moz-progress-bar {
+    background-color: #16a34a;
+    border-radius: 999px;
+}
+
+
+/* Червено запълване за Firefox. */
+.radiation-progress-alert::-moz-progress-bar {
+    background-color: #dc2626;
+    border-radius: 999px;
+}
+
+
+/* Числата под радиационната лента. */
+.radiation-scale-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 7px;
+    font-size: 14px;
+}
+
+
+/* Общ стил за статуса под графиката. */
+.radiation-status {
+    margin-top: 14px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+
+/* Зелен статус. */
+.radiation-status-normal {
+    color: #166534;
+}
+
+
+/* Червен предупредителен статус. */
+.radiation-status-alert {
+    color: #991b1b;
+}
+
+
+/* Обяснение на значението на 0.40 µSv/h. */
+.radiation-threshold-note {
+    margin-top: 8px;
+    margin-bottom: 0;
+    color: #555555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+/* Контейнер около лентата и процентната скала. */
+.pollutant-progress-wrapper {
+    min-width: 0;
+}
+
+
+/* Основна лента за един замърсител. */
+.pollutant-progress {
+    display: block;
+    width: 100%;
+    height: 22px;
+    border: 0;
+    appearance: none;
+    background-color: transparent;
+}
+
+
+/* Сивият фон в Chrome и Edge. */
+.pollutant-progress::-webkit-progress-bar {
+    background-color: #e2e8f0;
+    border-radius: 999px;
+}
+
+
+/* Зелено: под 75% от WHO референцията. */
+.pollutant-progress-normal::-webkit-progress-value {
+    background-color: #16a34a;
+    border-radius: 999px;
+}
+
+
+/* Оранжево: между 75% и 100%. */
+.pollutant-progress-warning::-webkit-progress-value {
+    background-color: #f59e0b;
+    border-radius: 999px;
+}
+
+
+/* Червено: над 100%. */
+.pollutant-progress-alert::-webkit-progress-value {
+    background-color: #dc2626;
+    border-radius: 999px;
+}
+
+
+/* Цветове за Firefox. */
+.pollutant-progress-normal::-moz-progress-bar {
+    background-color: #16a34a;
+    border-radius: 999px;
+}
+
+.pollutant-progress-warning::-moz-progress-bar {
+    background-color: #f59e0b;
+    border-radius: 999px;
+}
+
+.pollutant-progress-alert::-moz-progress-bar {
+    background-color: #dc2626;
+    border-radius: 999px;
+}
+
+
+/* Процентите под всяка лента. */
+.pollutant-scale-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #555555;
+}
+
+
+/* WHO референцията под текущата стойност. */
+.bar-reference {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    font-weight: normal;
+    color: #555555;
+    white-space: normal;
+}
+
+
+/* Легенда на цветовете. */
+.pollutant-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend-normal {
+    color: #166534;
+}
+
+.legend-warning {
+    color: #92400e;
+}
+
+.legend-alert {
+    color: #991b1b;
+}
+
+
+/* Предупреждение за различните периоди. */
+.pollutant-reference-note {
+    margin-top: 12px;
+    margin-bottom: 0;
+    color: #555555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+
+/* Малко повече място за стойността и референцията. */
+.pollutant-reference-row {
+    grid-template-columns: 65px minmax(0, 1fr) 175px;
+}
+
+
+@media (max-width: 700px) {
+    .pollutant-reference-row {
+        grid-template-columns: 55px minmax(0, 1fr);
     }
 }

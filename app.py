@@ -1,19 +1,24 @@
-# Импортираме Flask от инсталираната библиотека flask.
+# Import Flask from the installed flask library.
 from flask import Flask, render_template
 
-# Импортираме нашия модули за обработка на данните.
+# Import the project modules responsible for retrieving
+# and processing environmental data.
 import air_quality
 import radiation
 
-# Имена на замърсителите на български и английски език.
+
+# English display names for the monitored air pollutants.
 POLLUTANT_NAMES = {
-    "co": "Въглероден оксид / Carbon monoxide (CO)",
-    "no2": "Азотен диоксид / Nitrogen dioxide (NO₂)",
-    "o3": "Озон / Ozone (O₃)",
-    "pm10": "Фини прахови частици / Particulate matter (PM10)",
-    "pm25": "Фини прахови частици / Fine particulate matter (PM2.5)",
-    "so2": "Серен диоксид / Sulfur dioxide (SO₂)",
+    "co": "Carbon monoxide (CO)",
+    "no2": "Nitrogen dioxide (NO₂)",
+    "o3": "Ozone (O₃)",
+    "pm10": "Particulate matter (PM10)",
+    "pm25": "Fine particulate matter (PM2.5)",
+    "so2": "Sulfur dioxide (SO₂)",
 }
+
+
+# Pollutant-specific WHO reference values and averaging periods.
 POLLUTANT_REFERENCES = {
     "co": {
         "value": 4000.0,
@@ -41,50 +46,51 @@ POLLUTANT_REFERENCES = {
     },
 }
 
-# Създаваме Flask приложението.
+
+# Create the Flask application.
 app = Flask(__name__)
 
 
-# Този route определя какво да се случи при отваряне на началната страница.
+# Define what happens when the home page is accessed.
 @app.route("/")
 def index():
-    # Вземаме последното валидно измерване за всеки параметър.
+    # Retrieve the latest valid air-quality measurements.
     latest_measurements = (
-    air_quality.get_current_measurements()
-)
+        air_quality.get_current_measurements()
+    )
+
+    # Retrieve the latest available gamma dose-rate data.
     radiation_data = radiation.get_current_radiation()
 
-   # Подготвяме всеки замърсител спрямо
-    # неговата собствена WHO референтна стойност.
+    # Prepare chart data by comparing each measurement
+    # with its pollutant-specific WHO reference value.
     chart_measurements = []
 
     for parameter, measurement in latest_measurements.items():
         reference = POLLUTANT_REFERENCES.get(parameter)
 
-        # Пропускаме параметъра, ако няма зададена
-        # референтна стойност.
+        # Skip parameters without a defined reference value.
         if reference is None:
             continue
 
         value = measurement["value"]
         reference_value = reference["value"]
 
-        # Изчисляваме колко процента от
-        # референтната стойност представлява измерването.
+        # Calculate the measurement as a percentage
+        # of the corresponding WHO reference value.
         reference_percent = (
             value / reference_value
         ) * 100
 
-        # Лентата не може да бъде по-дълга от 100%.
-        # Реалният процент обаче остава видим като текст.
+        # Limit the visual progress bar to 100%.
+        # The actual percentage remains visible as text.
         progress_value = min(reference_percent, 100)
 
-        # Цветовете показват близостта до референцията.
-        # Това не е официална AQI класификация.
+        # Use orange when the value exceeds 75%
+        # of the selected reference value.
+        # This is not an official AQI classification.
         if reference_percent > 75:
             status = "warning"
-
-    
         else:
             status = "normal"
 
@@ -105,11 +111,7 @@ def index():
             }
         )
 
-    # Подготвяме обща информация за станцията и датата на данните.
-    station_name = ""
-    latest_update = ""
-
-    # Подготвяме обща информация за станцията и датата на данните.
+    # Prepare general station and timestamp information.
     station_name = ""
     latest_update = ""
 
@@ -118,19 +120,20 @@ def index():
         latest_update = measurement["datetime_local"]
         break
 
-     # Изпращаме информацията към HTML страницата.
+    # Send all prepared data to the HTML template.
     return render_template(
-        "index.html",
-        measurements=latest_measurements,
-        pollutant_names=POLLUTANT_NAMES,
-        station_name=station_name,
-        latest_update=latest_update,
-        radiation=radiation_data,
-        chart_measurements=chart_measurements,
-    )
+    "index.html",
+    measurements=latest_measurements,
+    pollutant_names=POLLUTANT_NAMES,
+    station_name=station_name,
+    latest_update=latest_update,
+    air_quality_source_url=air_quality.OPENAQ_SOURCE_URL,
+    radiation=radiation_data,
+    chart_measurements=chart_measurements,
+)
 
 
-
-# Стартираме приложението само когато изпълняваме app.py директно.
+# Start the development server only when app.py
+# is executed directly.
 if __name__ == "__main__":
     app.run(debug=True)

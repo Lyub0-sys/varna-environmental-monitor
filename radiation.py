@@ -4,28 +4,34 @@ import requests
 from bs4 import BeautifulSoup
 
 
-# Official website
+# Official Bulgarian Nuclear Regulatory Agency page
+# containing published gamma dose-rate measurements.
 RADIATION_URL = (
     "https://bnra.bg/bg/byuletin-za-gama-fona/"
 )
 
+# These Bulgarian labels are required for parsing
+# the Bulgarian-language source page.
+VARNA_LABEL_BG = "варна"
+UPDATED_LABEL_BG = "Актуални към"
+
 
 def get_live_radiation():
     """
-    Извлича последната публикувана стойност
-    за гама-фона във Варна от сайта на АЯР.
+    Retrieve the latest published gamma dose-rate value
+    for Varna from the official BNRA website.
     """
 
-    # html
+    # Request the official BNRA webpage.
     response = requests.get(
         RADIATION_URL,
         timeout=30,
     )
 
-    # if HTTP error
+    # Raise an exception for unsuccessful HTTP responses.
     response.raise_for_status()
 
-    # converts
+    # Parse the returned HTML document.
     soup = BeautifulSoup(
         response.text,
         "html.parser",
@@ -34,7 +40,7 @@ def get_live_radiation():
     varna_row = None
     updated_row = None
 
-    
+    # Search all table rows for the row containing Varna.
     for row in soup.find_all("tr"):
         cells = [
             cell.get_text(" ", strip=True)
@@ -44,15 +50,15 @@ def get_live_radiation():
         if not cells:
             continue
 
-        
-        if cells[0].casefold() == "варна":
+        if cells[0].casefold() == VARNA_LABEL_BG:
             varna_row = cells
 
-         
+            # Find the table containing the Varna row.
             varna_table = row.find_parent("table")
 
             if varna_table is not None:
-               
+                # Search the same table for the publication
+                # date and time.
                 for table_row in varna_table.find_all("tr"):
                     table_cells = [
                         cell.get_text(" ", strip=True)
@@ -63,23 +69,24 @@ def get_live_radiation():
 
                     if (
                         table_cells
-                        and "Актуални към" in table_cells[0]
+                        and UPDATED_LABEL_BG in table_cells[0]
                     ):
                         updated_row = table_cells
                         break
 
             break
 
-    
+    # The Varna row must contain at least the city
+    # and its measured value.
     if not varna_row or len(varna_row) < 2:
         raise RuntimeError(
             "The Varna radiation row was not found."
         )
 
-    # value of 10 microsivert per hour
     value_text = varna_row[1]
 
-    
+    # Extract a decimal value written with either
+    # a comma or a period.
     value_match = re.search(
         r"\d+(?:[.,]\d+)?",
         value_text,
@@ -90,10 +97,12 @@ def get_live_radiation():
             "The Varna radiation value was not found."
         )
 
-   
+    # Convert Bulgarian decimal commas to decimal points.
     value = float(
         value_match.group().replace(",", ".")
     )
+
+    # Extract the publication time and date.
     if updated_row:
         updated_text = " ".join(updated_row)
 
@@ -114,26 +123,27 @@ def get_live_radiation():
             )
         else:
             updated_at = updated_text
-
     else:
         updated_at = "Not specified"
+
     return {
         "available": True,
-        "city": "Варна / Varna",
+        "city": "Varna",
         "value": value,
         "unit": "µSv/h",
         "updated_at": updated_at,
-        "source_name": "АЯР / BNRA",
+        "source_name": "BNRA",
         "source_url": RADIATION_URL,
     }
 
 
 def get_current_radiation():
     """
-    Връща текущите данни за гама-фона.
+    Return the current gamma dose-rate data.
 
-    При проблем сайтът продължава да работи,
-    но показва, че данните временно не са налични.
+    If the external source is unavailable or its HTML
+    structure cannot be parsed, return a safe unavailable
+    state so that the Flask application can continue running.
     """
 
     try:
@@ -156,17 +166,17 @@ def get_current_radiation():
 
         return {
             "available": False,
-            "city": "Варна / Varna",
+            "city": "Varna",
             "value": None,
             "unit": "µSv/h",
             "updated_at": "",
-            "source_name": "АЯР / BNRA",
+            "source_name": "BNRA",
             "source_url": RADIATION_URL,
         }
 
 
 if __name__ == "__main__":
-    radiation = get_current_radiation()
+    radiation_data = get_current_radiation()
 
     print("\nRadiation data:")
-    print(radiation)
+    print(radiation_data)

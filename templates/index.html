@@ -10,257 +10,252 @@
     <h1>Varna Environmental Monitor</h1>
 
     <p>
-        Последни валидни измервания на въздуха /
         Latest valid air-quality measurements:
     </p>
 
     <div class="data-info">
         <p>
-            <strong>Станция / Station:</strong>
+            <strong>Station:</strong>
             {{ station_name }}
         </p>
 
         <p>
-            <strong>Данни към / Data as of:</strong>
+            <strong>Data as of:</strong>
             {{ latest_update }}
         </p>
-    </div>
-    <div class="data-info">
-    <p>
-        <strong>Гама-фон / Gamma dose rate:</strong>
-
-        {% if radiation and radiation["available"] %}
-            {{ "%.2f" | format(radiation["value"]) }}
-            {{ radiation["unit"] }}
-        {% else %}
-            Данните временно не са налични /
-            Data temporarily unavailable
-        {% endif %}
-    </p>
-
-    {% if radiation and radiation["available"] %}
-        <p>
-            <strong>Актуални към / Updated:</strong>
-            {{ radiation["updated_at"] }}
-        </p>
 
         <p>
-            <strong>Източник / Source:</strong>
+            <strong>Source:</strong>
 
             <a
-                href="{{ radiation['source_url'] }}"
+                href="{{ air_quality_source_url }}"
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                {{ radiation["source_name"] }}
+                OpenAQ
             </a>
         </p>
-    {% endif %}
-</div>
-<section class="chart-card radiation-chart-card">
-    <h2 class="chart-title">
-        Гама-фон спрямо естествения диапазон /
-        Gamma background against the natural range
-    </h2>
+    </div>
 
-    {% if radiation and radiation["available"] %}
+    <div class="data-info">
+        <p>
+            <strong>Gamma dose rate:</strong>
 
-        <p class="radiation-current-value">
-            <strong>Текуща стойност / Current value:</strong>
-            {{ "%.2f" | format(radiation["value"]) }}
-            {{ radiation["unit"] }}
-        </p>
-
-        <progress
-            class="
-                radiation-progress
-                {% if radiation['value'] <= 0.40 %}
-                    radiation-progress-normal
-                {% else %}
-                    radiation-progress-alert
-                {% endif %}
-            "
-            value="{{ radiation['value'] }}"
-            max="0.40"
-        >
-            {{ radiation["value"] }}
-            от / of 0.40 {{ radiation["unit"] }}
-        </progress>
-
-        <div class="radiation-scale-labels">
-            <span>0.00</span>
-
-            <span>
+            {% if radiation and radiation["available"] %}
                 {{ "%.2f" | format(radiation["value"]) }}
                 {{ radiation["unit"] }}
-            </span>
+            {% else %}
+                Data temporarily unavailable
+            {% endif %}
+        </p>
 
-            <span>
-                0.40 {{ radiation["unit"] }}
-            </span>
-        </div>
+        {% if radiation and radiation["available"] %}
+            <p>
+                <strong>Updated:</strong>
+                {{ radiation["updated_at"] }}
+            </p>
 
-        {% if radiation["value"] <= 0.40 %}
+            <p>
+                <strong>Source:</strong>
 
-            <p class="radiation-status radiation-status-normal">
-                В границите на естествените вариации /
-                Within the natural variation range
+                <a
+                    href="{{ radiation['source_url'] }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    BNRA
+                </a>
+            </p>
+        {% endif %}
+    </div>
+
+    <section class="chart-card radiation-chart-card">
+        <h2 class="chart-title">
+            Gamma background against the natural range
+        </h2>
+
+        {% if radiation and radiation["available"] %}
+
+            <p class="radiation-current-value">
+                <strong>Current value:</strong>
+                {{ "%.2f" | format(radiation["value"]) }}
+                {{ radiation["unit"] }}
+            </p>
+
+            <progress
+                class="
+                    radiation-progress
+                    {% if radiation['value'] <= 0.40 %}
+                        radiation-progress-normal
+                    {% else %}
+                        radiation-progress-alert
+                    {% endif %}
+                "
+                value="{{ radiation['value'] }}"
+                max="0.40"
+            >
+                {{ radiation["value"] }}
+                of 0.40 {{ radiation["unit"] }}
+            </progress>
+
+            <div class="radiation-scale-labels">
+                <span>0.00</span>
+
+                <span>
+                    {{ "%.2f" | format(radiation["value"]) }}
+                    {{ radiation["unit"] }}
+                </span>
+
+                <span>
+                    0.40 {{ radiation["unit"] }}
+                </span>
+            </div>
+
+            {% if radiation["value"] <= 0.40 %}
+
+                <p class="radiation-status radiation-status-normal">
+                    Within the natural variation range
+                </p>
+
+            {% else %}
+
+                <p class="radiation-status radiation-status-alert">
+                    Above the natural range — check the official
+                    BNRA information
+                </p>
+
+            {% endif %}
+
+            <p class="radiation-threshold-note">
+                0.40 µSv/h is the upper end of the natural range
+                cited by BNRA, not an automatic threshold for
+                immediate danger.
             </p>
 
         {% else %}
 
-            <p class="radiation-status radiation-status-alert">
-                Над естествения диапазон — провери официалната
-                информация на АЯР /
-                Above the natural range — check the official
-                BNRA information
+            <p>
+                No radiation chart data is available.
             </p>
 
         {% endif %}
+    </section>
 
-        <p class="radiation-threshold-note">
-            0.40 µSv/h е горната граница на посочения от АЯР
-            естествен диапазон, а не автоматичен праг за
-            непосредствена опасност /
-            0.40 µSv/h is the upper end of the natural range
-            cited by BNRA, not an automatic immediate-danger
-            threshold.
+    <section class="chart-card">
+        <h2 class="chart-title">
+            Concentrations against WHO reference values
+        </h2>
+
+        <p class="chart-note">
+            Each bar uses a pollutant-specific reference value.
+            The comparison is indicative because the averaging
+            periods differ.
         </p>
 
-    {% else %}
+        {% if chart_measurements %}
 
-        <p>
-            Няма налични данни за радиационната графика /
-            No radiation chart data is available.
-        </p>
+            <div class="bar-chart">
 
-    {% endif %}
-</section>
- <section class="chart-card">
-    <h2 class="chart-title">
-        Концентрации спрямо WHO референтни стойности /
-        Concentrations against WHO reference values
-    </h2>
+                {% for item in chart_measurements
+                    | sort(attribute="parameter") %}
 
-    <p class="chart-note">
-        Всяка лента използва собствена референтна
-        стойност за съответния замърсител.
-        Сравнението е ориентировъчно, защото периодите
-        на осредняване са различни /
-        Each bar uses a pollutant-specific reference.
-        The comparison is indicative because the
-        averaging periods differ.
-    </p>
+                    <div class="bar-row pollutant-reference-row">
 
-    {% if chart_measurements %}
-
-        <div class="bar-chart">
-
-            {% for item in chart_measurements
-                | sort(attribute="parameter") %}
-
-                <div class="bar-row pollutant-reference-row">
-
-                    <div
-                        class="bar-label"
-                        title="{{ item['label'] }}"
-                    >
-                        {% if item["parameter"] == "pm25" %}
-                            PM2.5
-                        {% else %}
-                            {{ item["parameter"] | upper }}
-                        {% endif %}
-                    </div>
-
-                    <div class="pollutant-progress-wrapper">
-
-                        <progress
-                            class="
-                                pollutant-progress
-                                pollutant-progress-{{ item['status'] }}
-                            "
-                            value="{{
-                                item['progress_value'] | round(1)
-                            }}"
-                            max="100"
+                        <div
+                            class="bar-label"
+                            title="{{ item['label'] }}"
                         >
-                            {{
-                                item["reference_percent"] | round(1)
-                            }}%
-                        </progress>
+                            {% if item["parameter"] == "pm25" %}
+                                PM2.5
+                            {% else %}
+                                {{ item["parameter"] | upper }}
+                            {% endif %}
+                        </div>
 
-                        <div class="pollutant-scale-labels">
-                            <span>0%</span>
+                        <div class="pollutant-progress-wrapper">
 
-                            <span>
+                            <progress
+                                class="
+                                    pollutant-progress
+                                    pollutant-progress-{{ item['status'] }}
+                                "
+                                value="{{
+                                    item['progress_value'] | round(1)
+                                }}"
+                                max="100"
+                            >
                                 {{
-                                    item["reference_percent"]
-                                    | round(1)
+                                    item["reference_percent"] | round(1)
                                 }}%
-                            </span>
+                            </progress>
 
-                            <span>100%</span>
+                            <div class="pollutant-scale-labels">
+                                <span>0%</span>
+
+                                <span>
+                                    {{
+                                        item["reference_percent"]
+                                        | round(1)
+                                    }}%
+                                </span>
+
+                                <span>100%</span>
+                            </div>
+
+                        </div>
+
+                        <div class="bar-value">
+                            {{ item["value"] }}
+                            {{ item["unit"] }}
+
+                            <small class="bar-reference">
+                                WHO:
+                                {{ item["reference_value"] | int }}
+                                µg/m³ /
+                                {{ item["reference_period"] }}
+                            </small>
                         </div>
 
                     </div>
 
-                    <div class="bar-value">
-                        {{ item["value"] }}
-                        {{ item["unit"] }}
+                {% endfor %}
 
-                        <small class="bar-reference">
-                            WHO:
-                            {{ item["reference_value"] | int }}
-                            µg/m³ /
-                            {{ item["reference_period"] }}
-                        </small>
-                    </div>
+            </div>
 
-                </div>
+            <div class="pollutant-legend">
+                <span class="legend-normal">
+                    ● Below 75%
+                </span>
 
-            {% endfor %}
+                <span class="legend-warning">
+                    ● 75% and above
+                </span>
+            </div>
 
-        </div>
+            <p class="pollutant-reference-note">
+                Colours show proximity to WHO health reference
+                values, but do not represent an official air-quality
+                index or a confirmed legal exceedance.
+            </p>
 
-        <div class="pollutant-legend">
-            <span class="legend-normal">
-                ● Под 75% / Below 75%
-            </span>
+        {% else %}
 
-            <span class="legend-warning">
-                ● 75% и повече / 75% and above
-            </span>
+            <p>
+                No chart data is available.
+            </p>
 
-        </div>
+        {% endif %}
+    </section>
 
-        <p class="pollutant-reference-note">
-            Цветовете показват близост до здравните
-            референтни стойности на WHO, но не представляват
-            официален индекс или доказано законово превишение /
-            Colours show proximity to WHO health reference
-            values, not an official index or confirmed
-            legal exceedance.
-        </p>
-
-    {% else %}
-
-        <p>
-            Няма данни за графиката /
-            No chart data is available.
-        </p>
-
-    {% endif %}
-</section>
-
-<ul>
-    {% for parameter, measurement in measurements.items() %}
-        <li>
-            <strong>{{ pollutant_names[parameter] }}</strong>:
-            {{ measurement["value"] }}
-            {{ measurement["unit"] }}
-            —
-            {{ measurement["datetime_local"] }}
-        </li>
-    {% endfor %}
-</ul>
+    <ul>
+        {% for parameter, measurement in measurements.items() %}
+            <li>
+                <strong>{{ pollutant_names[parameter] }}</strong>:
+                {{ measurement["value"] }}
+                {{ measurement["unit"] }}
+                —
+                {{ measurement["datetime_local"] }}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
